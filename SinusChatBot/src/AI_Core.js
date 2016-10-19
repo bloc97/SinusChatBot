@@ -15,7 +15,7 @@ registerPlugin({
                     compare : function(string, substr){
                         return (string.search(substr) !== -1);
                     },
-                    contains : function(string, array){
+                    contains : function(array, string){
                         return (array.indexOf(string) !== -1);
                     }
                 },
@@ -32,13 +32,24 @@ registerPlugin({
                         that.botName = ""; //Name that bot responds to
                         //that.isBotCalled = (AI.Core.compare(that.msg,that.botName)||that.mode<=1);
                         return that;
+                    },
+                    infopacket : function(){
+                        this.output={};
+                        this.output.message = [[],[],[],[]];
+                        this.output.action = [[],[],[],[]];
+                        this.isHalted = false;
+                        
+                        
                     }
                 },
                 Module : {
                     loaded : {
                         module : [],
                         names : [],
-                        sorted : false
+                        sorted : false,
+                        check : function(modulename){
+                            return AI.Core.contains(this.names,modulename);
+                        }
                     },
                     register : function(module){
                         this.loaded.module.push(module); //pushes the module object into the array, so it can be accessed through iteration
@@ -57,14 +68,29 @@ registerPlugin({
                     },
                     sort : function(){
                         if (!this.loaded.sorted){
-                            this.loaded.module.sort(comparefunc);
+                            this.loaded.module.sort(this.comparefunc);
                             this.loaded.sorted=true;
                         }
                     },
-                    send : function(metadata,eventpacket,infopacket){ //sends the metadata, eventpacket and infopacket to all modules
+                    send : function(eventpacket,infopacket){ //sends the eventpacket and infopacket to all modules
                         for (var i=0, j=this.loaded.module.length; i<j; i++){
-                            infopacket = this.loaded.module[i].main(metadata,eventpacket,infopacket);
+                            infopacket = this.loaded.module[i].main(eventpacket,infopacket);
+                            if (infopacket.isHalted) break;
                         }
+                        if (!this.loaded.check("Latency")){
+                            AI.Output.message(eventpacket,infopacket);
+                            AI.Output.action(eventpacket,infopacket);
+                        }
+                    }
+                },
+                Output : {
+                    message : function(eventpacket,infopacket){
+                        for (var i=0, j=infopacket.output.message[0].length; i<j; i++){
+                            sinusbot.chatChannel(infopacket.output.message[0][i]);
+                        }
+                    },
+                    action : function(eventpacket,infopacket){
+                        
                     }
                 }
             };
@@ -74,10 +100,10 @@ registerPlugin({
                 var event = e;
                 
                 var eventpacket = AI.Event.packetise(event); //packet that contains the event information
-                var infopacket = {}; //packet that contains information passed on by modules
-                var metadata = {}; //packet that contains misc info, such as which modules to ignore, or used to send the same event twice across modules.
+                var infopacket = new AI.Event.infopacket(); //packet that contains information passed on by modules
+                //var metadata = {}; //packet that contains misc info, such as which modules to ignore, or used to send the same event twice across modules.
                 
-                AI.Module.send(metadata,eventpacket,infopacket);
+                AI.Module.send(eventpacket,infopacket);
 
             });
                 
@@ -87,10 +113,10 @@ registerPlugin({
                 event.mode = 0;
                 
                 var eventpacket = AI.Event.packetise(event);
-                var infopacket = {};
-                var metadata = {};
+                var infopacket = new AI.Event.infopacket();
+                //var metadata = {};
                 
-                AI.Module.send(metadata,eventpacket,infopacket);
+                AI.Module.send(eventpacket,infopacket);
 
             });
 
