@@ -1,5 +1,5 @@
 registerPlugin({
-	name: 'Chat Bot (Core)', //S-CHAP
+	name: 'Chat Bot (Core)', //TS-CHAP CHAtbot Project
 	version: '0.01',
 	description: 'Custom AI Chatbot',
 	author: 'Bloc97',
@@ -26,6 +26,7 @@ registerPlugin({
                         that.msg = event.msg.toLowerCase()||"_NULL_";
                         that.mode = event.mode;
                         that.clientId = event.clientId;
+                        //that.clientUid = event.clientUid;
                         that.clientNick = event.clientNick;
                         that.botNick = sinusbot.getNick(); //Nick that appears in teamspeak
                         that.botName = ""; //Name that bot responds to
@@ -36,11 +37,13 @@ registerPlugin({
                 Module : {
                     loaded : {
                         module : [],
+                        names : [],
                         sorted : false
                     },
                     register : function(module){
                         this.loaded.module.push(module); //pushes the module object into the array, so it can be accessed through iteration
-                        AI.Module[module.name]=module; //pushes the module object into the AI object, so it can be accessed manually using AI.obj
+                        this.loaded.names.push(module.name);
+                        AI.Module[module.name]=module; //pushes the module object into the AI object, so it can be accessed manually using AI.Module.obj
                     },
                     comparefunc : function(a,b){ //used in Modules.sort() to sort the modules in the array from lowest to highest ID
                         if (a.id < b.id){
@@ -52,27 +55,36 @@ registerPlugin({
                         }
                     },
                     sort : function(){
-                        this.loaded.module.sort(comparefunc);
+                        if (!this.loaded.sorted){
+                            this.loaded.module.sort(comparefunc);
+                            this.loaded.sorted=true;
+                        }
                     },
-                    send : function(eventpacket){
-                        
+                    send : function(eventpacket,infopacket){
+                        for (var i=0, j=this.loaded.module.length; i<j; i++){
+                            infopacket = this.loaded.module[i].main(eventpacket,infopacket);
+                        }
                     }
                 }
             };
 	
             sinusbot.on("chat", function(e){
+                AI.Module.sort();
                 var event = e;
                 var eventpacket = AI.Event.packetise(event);
-
+                var infopacket = {};
+                AI.Module.send(eventpacket,infopacket);
 
             });
                 
             sinusbot.on("poke", function(e){
+                AI.Module.sort();
                 var event = e;
                 event.mode = 0;
-                
                 var eventpacket = AI.Event.packetise(event);
-
+                var infopacket = {};
+                AI.Module.send(eventpacket,infopacket);
+                
 
             });
 
