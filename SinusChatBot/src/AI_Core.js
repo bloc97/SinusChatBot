@@ -134,7 +134,11 @@ registerPlugin({
                     send : function(eventpacket,infopacket){ //sends the eventpacket and infopacket to all modules
                         for (var i=0, j=this.data.loaded.length; i<j; i++){
                             //infopacket = this.data.loaded[i].main(eventpacket,infopacket); //overwrites infopacket for next module to read
-                            this.data.loaded[i].main(eventpacket,infopacket);
+                            try {
+                                this.data.loaded[i].main(eventpacket,infopacket);
+                            } catch (err) {
+                                
+                            }
                             if (infopacket.isHalted) break;
                         }
                         if (!this.data.check("Latency")){
@@ -162,6 +166,12 @@ registerPlugin({
                 var eventpacket = AI.Event.packetise(event); //packet that contains the event information
                 var infopacket = new AI.Event.infopacket(); //packet that contains information passed on by modules
                 //var metadata = {}; //packet that contains misc info, such as which modules to ignore, or used to send the same event twice across modules.
+                
+                //if (eventpacket.clientNick===eventpacket.botNick){
+                //    return;
+                //}
+                //instead check at end, if bot said samething than input, don't output
+                //to prevent infinite loops
                 
                 AI.Module.send(eventpacket,infopacket);
 
