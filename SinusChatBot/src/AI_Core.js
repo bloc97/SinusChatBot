@@ -137,7 +137,8 @@ registerPlugin({
                             try {
                                 this.data.loaded[i].main(eventpacket,infopacket);
                             } catch (err) {
-                                
+                                //handle corrupted infopacket here
+                                continue;
                             }
                             if (infopacket.isHalted) break;
                         }
