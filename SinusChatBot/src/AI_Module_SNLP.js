@@ -28,7 +28,7 @@ registerPlugin({
                     infopacket.output.message[2].push(eventpacket.mode);
                     infopacket.output.message[3].push(eventpacket.clientId);
                     
-                    return infopacket;
+                    //return infopacket;
                     
                 }
                 

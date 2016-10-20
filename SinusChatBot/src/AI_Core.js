@@ -57,23 +57,32 @@ registerPlugin({
                 },
                 Module : {
                     data : { //object used to track all modules
-                        module : [],
-                        loaded : [],
+                        module : [], //registered modules go here
+                        loaded : [], //loaded modules go here (modules that autorun)
                         sorted : false,
                         check : function(array, entry){ //checks if module is in array
                             return (this[array].indexOf(entry) !== -1);
                         },
-                        searchModule : function(array, prop, data){ //searches for name/id/uid and returns module
+                        checkReg : function(module){
+                            return this.check("module", module);
+                        },
+                        checkLoad : function(module){
+                            return this.check("loaded", module);
+                        },
+                        search : function(array, prop, value){ //searches for module in array using property and value
                             for (var i=0, j=array.length; i<j; i++){
-                                if (array[i][prop]===data){
+                                if (array[i][prop]===value){
                                     return array[i];
                                 } else {
                                     return false;
                                 }
                             }
                         },
-                        checkProp : function(array, prop, data){ //checks if module is registered or loaded
-                            return (this.searchModule(array, prop, data)!==false);
+                        searchReg : function(prop, value){
+                            return this.search("module", prop, value);
+                        },
+                        searchLoad : function(prop, value){
+                            return this.search("loaded", prop, value);
                         }
                     },
                     register : function(module){
@@ -82,22 +91,30 @@ registerPlugin({
     
                     },
                     load : function(module){
-                        var toLoad = this.data.searchModule("module", "uid", module.uid); //checks if module is registered
-                        var isAlreadyLoaded = this.data.checkProp("loaded", "uid", module.uid); //checks if module isn't already loaded
-                        if (toLoad===module && isAlreadyLoaded===false){
+                        if (this.data.checkReg(module) && !this.data.checkLoad(module)){
                             this.data.loaded.push(module);
-                            this.data.sorted=false; //sets sorted to false, for re-sorting
+                            this.data.sorted=false;
                         }
-                        
                     },
                     unload : function(module){
-                        
+                        if (this.data.checkLoad(module)){
+                            var oldarr = this.data.loaded;
+                            var newarr = [];
+                            for (var i=0, j=oldarr.length; i<j; i++){
+                                if (oldarr[i]!==module){
+                                    newarr.push(oldarr[i]);
+                                }
+                            }
+                            oldarr = newarr;
+                        }
                     },
                     loadByProp : function(prop, value){ //loads registered modules using name, id, uid, etc.
-                        
+                        var module = this.data.searchReg(prop, value);
+                        this.load(module);
                     },
                     unloadByProp : function(prop, value){ //unloads loaded modules using name,id, uid, etc.
-                        
+                        var module = this.data.searchLoad(prop, value);
+                        this.unload(module);
                     },
                     comparefunc : function(a,b){ //used in Modules.sort() to sort the modules in the array from lowest to highest ID
                         if (a.id < b.id){
@@ -116,7 +133,8 @@ registerPlugin({
                     },
                     send : function(eventpacket,infopacket){ //sends the eventpacket and infopacket to all modules
                         for (var i=0, j=this.data.loaded.length; i<j; i++){
-                            infopacket = this.data.loaded[i].main(eventpacket,infopacket);
+                            //infopacket = this.data.loaded[i].main(eventpacket,infopacket); //overwrites infopacket for next module to read
+                            this.data.loaded[i].main(eventpacket,infopacket);
                             if (infopacket.isHalted) break;
                         }
                         if (!this.data.check("Latency")){
@@ -126,7 +144,7 @@ registerPlugin({
                     }
                 },
                 Output : {
-                    message : function(eventpacket,infopacket){
+                    message : function(eventpacket,infopacket){ //reads packet and sends them back to the sinusbot event handler
                         for (var i=0, j=infopacket.output.message[0].length; i<j; i++){
                             sinusbot.chatChannel(infopacket.output.message[0][i]);
                         }
