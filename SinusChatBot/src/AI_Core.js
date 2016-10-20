@@ -12,15 +12,15 @@ registerPlugin({
             
             AI = {
                 Core : {
-                    compare : function(string, substr){
+                    compare : function(string, substr){ //checks if substring is in string
                         return (string.search(substr) !== -1);
                     },
-                    contains : function(array, string){
+                    contains : function(array, string){ //checks if string is in array
                         return (array.indexOf(string) !== -1);
                     }
                 },
                 Event : {
-                    packetise : function(event){
+                    packetise : function(event){ //transforms the event into a packet for modules
                         var that = {};
                         that.rawmsg = event.msg||"_NULL_";
                         that.msg = event.msg.toLowerCase()||"_NULL_";
@@ -33,9 +33,9 @@ registerPlugin({
                         //that.isBotCalled = (AI.Core.compare(that.msg,that.botName)||that.mode<=1);
                         return that;
                     },
-                    infopacket : function(){
+                    infopacket : function(){ //information packet reserved for modules
                         this.output={};
-                        this.output.message = [[],[],[],[]];
+                        this.output.message = [[],[],[],[]]; //[message, delay (ms), mode of speech, user]
                         this.output.action = [[],[],[],[]];
                         this.isHalted = false;
                         
@@ -43,11 +43,11 @@ registerPlugin({
                     }
                 },
                 Module : {
-                    loaded : {
+                    loaded : { //object used to track all modules
                         module : [],
                         names : [],
                         sorted : false,
-                        check : function(modulename){
+                        check : function(modulename){ //checks if module is loaded (in names array)
                             return AI.Core.contains(this.names,modulename);
                         }
                     },
@@ -66,7 +66,7 @@ registerPlugin({
                             return 0;
                         }
                     },
-                    sort : function(){
+                    sort : function(){ //sorts the module array by ID, increasing order
                         if (!this.loaded.sorted){
                             this.loaded.module.sort(this.comparefunc);
                             this.loaded.sorted=true;
