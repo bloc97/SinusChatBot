@@ -14,7 +14,9 @@ registerPlugin({
             
             var snlp = {
                 name : "SNLP",
-                id : 100,
+                refname : "Snlp", //use this name to call AI.Module.<refname>
+                id : 100, //ID used to load modules in order
+                uid : "snlp1000", //unique ID used by database, do not change after setting one. Can be any string.
                 main : function(eventpacket,infopacket){
                     
                     if (eventpacket.rawmsg==="Status"){
@@ -35,6 +37,7 @@ registerPlugin({
 
             sinusbot.on("connect", function(){
                 AI.Module.register(snlp);
+                AI.Module.load(snlp);
             });
 	}
 );
