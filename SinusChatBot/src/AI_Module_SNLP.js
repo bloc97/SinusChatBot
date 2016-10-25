@@ -18,18 +18,21 @@ registerPlugin({
                 refname : "Snlp", //use this name to call AI.Module.<refname>
                 id : 100, //ID used to load modules in order
                 uid : "snlp1000", //unique ID used by database, do not change after setting one. Can be any string.
-                main : function(eventpacket,infopacket){
-                    
-                    if (eventpacket.rawmsg==="Status"){
-                        infopacket.output.message[0].push("SNLP Registered.");
-                        infopacket.output.message[0].push("Test 1.");
-                        infopacket.output.message[0].push("Test 2.");
+                checkIsCommand : function(msg){
+                    var firstchar = msg.charAt(0);
+                    if (firstchar === "!" || firstchar === "/"){
+                        return true;
+                    } else {
+                        return false;
                     }
-                    infopacket.output.message[1].push(500);
-                    infopacket.output.message[2].push(eventpacket.mode);
-                    infopacket.output.message[3].push(eventpacket.clientId);
+                },
+                main : function(eventpacket,infopacket){
+                    if (this.checkIsCommand(eventpacket.msg)){
+                        return false;
+                    }
                     
-                    //return infopacket;
+                    
+                    
                     
                 }
                 
