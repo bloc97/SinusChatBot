@@ -139,6 +139,7 @@ registerPlugin({
                                 this.data.loaded[i].main(eventpacket,infopacket);
                             } catch (err) {
                                 //handle corrupted infopacket here
+                                infopacket.output.addMessage("Debug: ERROR in Module '" + this.data.loaded[i].name + "' " + err);
                                 continue;
                             }
                             if (infopacket.isHalted) break;

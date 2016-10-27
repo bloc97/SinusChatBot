@@ -3,7 +3,7 @@
 registerPlugin({
 	name: 'TS-CHAP (Module: SNLP)', //TS-CHAP CHAtbot Project
 	version: '0.01',
-	description: 'TS-CHAP SNLP Module, enables simple language processing.',
+	description: 'TS-CHAP Language Processing Module, enables simple language processing.',
 	author: 'Bloc97',
 	vars: [
 	]
@@ -20,19 +20,19 @@ registerPlugin({
                 uid : "snlp1000", //unique ID used by database, do not change after setting one. Can be any string.
                 checkIsCommand : function(msg){
                     var firstchar = msg.charAt(0);
-                    if (firstchar === "!" || firstchar === "/"){
+                    if ((firstchar.toLowerCase() === firstchar.toUpperCase()) && (+firstchar !== +firstchar)){//Not a character, nor a number, nor a whitespace
                         return true;
                     } else {
                         return false;
                     }
                 },
                 main : function(eventpacket,infopacket){
-                    if (this.checkIsCommand(eventpacket.msg)){
+                    if (this.checkIsCommand(eventpacket.msg)){ //If it's a command, break
                         return false;
                     }
                     
                     
-                    
+                    infopacket.output.addMessage("Debug: Natural Language Detected.");
                     
                 }
                 
