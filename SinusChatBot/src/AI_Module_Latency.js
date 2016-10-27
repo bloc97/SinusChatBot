@@ -16,7 +16,7 @@ registerPlugin({
                 name : "TIME",
                 desc : "Bot Latency Handler",
                 refname : "Latency", //use this name to call AI.Module.<refname>
-                id : 100, //ID used to load modules in order
+                id : 1e10, //ID used to load modules in order
                 uid : "time1000", //unique ID used by database, do not change after setting one. Can be any string.
                 main : function(eventpacket,infopacket){
 

@@ -16,7 +16,7 @@ registerPlugin({
                 name : "SNLP",
                 desc : "Simple Natural Language Processor",
                 refname : "Snlp", //use this name to call AI.Module.<refname>
-                id : 100, //ID used to load modules in order
+                id : 110, //ID used to load modules in order
                 uid : "snlp1000", //unique ID used by database, do not change after setting one. Can be any string.
                 checkIsCommand : function(msg){
                     var firstchar = msg.charAt(0);

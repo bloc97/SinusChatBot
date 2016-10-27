@@ -16,13 +16,24 @@ registerPlugin({
                 name : "OUTP",
                 desc : "Output Handler",
                 refname : "Output", //use this name to call AI.Module.<refname>
-                id : 100, //ID used to load modules in order
+                id : 1e11, //ID used to load modules in order
                 uid : "outp1000", //unique ID used by database, do not change after setting one. Can be any string.
                 main : function(eventpacket,infopacket){
+                    if (eventpacket.clientNick === eventpacket.botNick){
+                        return false;
+                    }
+                    this.message(infopacket);
+                    this.action(infopacket);
                     
-                    
+                },
+                message : function(infopacket){ //reads packet and sends them back to the sinusbot event handler
+                    for (var i=0, j=infopacket.output.message[0].length; i<j; i++){
+                        sinusbot.chatChannel(infopacket.output.message[0][i]);
+                    }
+                },
+                action : function(eventpacket,infopacket){
+
                 }
-                
                 
             };
 
