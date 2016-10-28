@@ -15,7 +15,7 @@ registerPlugin({
             var datahandler = {
                 name : "DATH",
                 desc : "Database Handler",
-                refname : "DataHandler", //use this name to call AI.Module.<refname>
+                refname : "Database", //use this name to call AI.Module.<refname>
                 id : -1, //Do not load datahandler!
                 uid : "dath1000", //unique ID used by database, do not change after setting one. Can be any string.
                 instid : "default_CHAP", //id used to store database in a sinusbot file
@@ -31,12 +31,15 @@ registerPlugin({
                     return this.database[uid]||false; //if entry does not exist, return false
                 },
                 save : function(){
-                    sinusbot.setVarGlobal(this.instid);
+                    sinusbot.setVarGlobal(this.instid, this.database);
                 },
                 load : function(){
-                    this.instid = sinusbot.getVarGlobal(this.instid);
+                    this.database = sinusbot.getVarGlobal(this.instid);
                 },
                 reset : function(){
+                    this.database = {};
+                },
+                delete : function(){
                     sinusbot.unsetVarGlobal(this.instid);
                 }
                 

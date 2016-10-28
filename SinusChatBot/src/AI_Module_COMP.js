@@ -18,7 +18,7 @@ registerPlugin({
                 refname : "Command", //use this name to call AI.Module.<refname>
                 id : 100, //ID used to load modules in order
                 uid : "comp1000", //unique ID used by database, do not change after setting one. Can be any string.
-                checkIsCommand : function(msg){
+                checkIsCommand : function(msg){ //checks for first character symbols (commands)
                     var firstchar = msg.charAt(0);
                     var secondchar = msg.charAt(1);
                     if ((firstchar.toLowerCase() === firstchar.toUpperCase()) && (+firstchar !== +firstchar) && (secondchar !== " ")){//Not a character, nor a number, nor a whitespace
@@ -27,7 +27,7 @@ registerPlugin({
                         return false;
                     }
                 },
-                checkIsBB : function(msg){
+                checkIsBB : function(msg){ //checks for BB code
                     var firstchar = msg.charAt(0);
                     var lastchar = msg.charAt(msg.length-1);
                     if (firstchar === "[" && lastchar === "]"){

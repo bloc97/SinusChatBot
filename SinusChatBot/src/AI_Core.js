@@ -47,7 +47,7 @@ registerPlugin({
                             this.message[3].push(user||AI.NULL);
                         };
                         this.output.addAction = function(action, delay, info, user){
-                            this.action[0].push(action||0);
+                            this.action[0].push(action||false);
                             this.action[1].push(delay||0);
                             this.action[2].push(info||AI.NULL);
                             this.action[3].push(user||AI.NULL);
@@ -56,6 +56,7 @@ registerPlugin({
                     }
                 },
                 Module : {
+                    isDebug : false,
                     data : { //object used to track all modules
                         module : [], //registered modules go here
                         loaded : [], //loaded modules go here (modules that autorun)
@@ -139,7 +140,10 @@ registerPlugin({
                                 this.data.loaded[i].main(eventpacket,infopacket);
                             } catch (err) {
                                 //handle corrupted infopacket here
-                                infopacket.output.addMessage("Debug: ERROR in Module '" + this.data.loaded[i].name + "' " + err);
+                                if (this.isDebug){
+                                    infopacket.output.addMessage("Debug: ERROR in Module '" + this.data.loaded[i].name + "' " + err);
+                                }
+                                
                                 continue;
                             }
                             if (infopacket.isHalted) break;

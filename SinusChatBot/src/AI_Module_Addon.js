@@ -18,6 +18,7 @@ registerPlugin({
                 refname : "Addon", //use this name to call AI.Module.<refname>
                 id : 500, //ID used to load modules in order
                 uid : "addm1000", //unique ID used by database, do not change after setting one. Can be any string.
+                isDebug : false,
                 main : function(eventpacket,infopacket){
                     var addonpacket = new this.Addonpacket();
                     this.send(eventpacket,infopacket,addonpacket);
@@ -106,6 +107,9 @@ registerPlugin({
                         try {
                             this.data.loaded[i].main(eventpacket,infopacket,addonpacket);
                         } catch (err) {
+                            if (this.isDebug){
+                                infopacket.output.addMessage("Debug: ERROR in Adddon '" + this.data.loaded[i].name + "' " + err);
+                            }
                             //handle corrupted packets here
                             continue;
                         }
