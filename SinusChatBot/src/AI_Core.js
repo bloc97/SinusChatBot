@@ -61,8 +61,8 @@ registerPlugin({
                         module : [], //registered modules go here
                         loaded : [], //loaded modules go here (modules that autorun)
                         sorted : false,
-                        check : function(array, entry){ //checks if module is in array
-                            return (this[array].indexOf(entry) !== -1);
+                        check : function(arrayname, entry){ //checks if module is in array
+                            return (this[arrayname].indexOf(entry) !== -1);
                         },
                         checkReg : function(module){
                             return this.check("module", module);
@@ -70,7 +70,8 @@ registerPlugin({
                         checkLoad : function(module){
                             return this.check("loaded", module);
                         },
-                        search : function(array, prop, value){ //searches for module in array using property and value
+                        search : function(arrayname, prop, value){ //searches for module in array using property and value
+							var array = this[arrayname];
                             for (var i=0, j=array.length; i<j; i++){
                                 if (array[i][prop]===value){
                                     return array[i]; //if found, returns the module object, otherwise return false
